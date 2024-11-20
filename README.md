@@ -4,11 +4,11 @@ This repository contains C programs for various data structure and algorithm imp
 
 ## **Programs Included**
 
-1. **String Operations (Using Built-in Functions)** - [P1.C](P1.C)  
-2. **String Operations (Without Built-in Functions)** - [P2.C](P2.C)  
-3. **Stack Using Array** - [P3.C](P3.C)  
-4. **Expression Conversion Using Stack** - [P4.C](P4.C)  
-5. **Linear Queue** - [P5.C](P5.C)  
+1. **String Operations (Using Built-in Functions)** - [P1.C](p1.c)  
+2. **String Operations (Without Built-in Functions)** - [P2.C](P2.c)  
+3. **Stack Using Array** - [P3.C](P3.c)  
+4. **Expression Conversion Using Stack** - [P4.C](P4.c)  
+5. **Linear Queue** - [P5.C](P5.c)  
 6. **Circular Queue** - [P6.C](P6.C)  
 7. **Priority Queue** - [P7.C](P7.C)  
 8. **Double-Ended Queue** - [P8.C](P8.C)  

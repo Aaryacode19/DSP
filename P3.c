@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include<stdlib.h>
 #define SIZE 10
 
 int stack[SIZE];
@@ -73,7 +74,8 @@ int main()
             break;
 
         case 4:
-            return 0; // Exit the program
+            //return 0; // Exit the program
+            exit(0);
 
         default:
             printf("Wrong selection! Please choose a valid option.\n");

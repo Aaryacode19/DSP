@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define structure for the node
+struct Node {
+    int data;           // The data stored in the node
+    struct Node *left, *right; // Pointers to left and right child nodes
+    int lthread, rthread; // 1 if left/right is a thread, 0 if it's a child pointer
+};
+
+// Function to create a new threaded binary tree node
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->left = newNode->right = NULL;  // Initially, both left and right are NULL
+    newNode->lthread = newNode->rthread = 0;  // Set both threads to 0 (i.e., no threads initially)
+    return newNode;
+}
+
+// Insertion function for the threaded binary tree
+void insert(struct Node** root, int data) {
+    struct Node *parent = NULL, *temp = *root, *newNode;
+    
+    // Traverse the tree to find the correct location for the new node
+    while (temp != NULL) {
+        parent = temp;
+        if (data < temp->data) {  // If data is smaller, move to the left
+            if (temp->lthread == 0) 
+                temp = temp->left;  // Move to left child if it's not a thread
+            else 
+                break;
+        } else {  // If data is larger, move to the right
+            if (temp->rthread == 0) 
+                temp = temp->right;  // Move to right child if it's not a thread
+            else 
+                break;
+        }
+    }
+
+    newNode = createNode(data);
+    
+    // Insert the new node as a left child or right child of parent node
+    if (data < parent->data) {
+        newNode->left = parent->left;
+        newNode->right = parent;
+        parent->lthread = 1;  // Thread the left child to the parent
+        parent->left = newNode;  // Link the new node as the left child of parent
+    } else {
+        newNode->right = parent->right;
+        newNode->left = parent;
+        parent->rthread = 1;  // Thread the right child to the parent
+        parent->right = newNode;  // Link the new node as the right child of parent
+    }
+}
+
+// In-order traversal (using threads for traversal)
+void inorder(struct Node* root) {
+    if (root == NULL)
+        return;
+
+    // Go to the leftmost node (smallest value in the tree)
+    struct Node* temp = root;
+    while (temp->left != NULL)
+        temp = temp->left;
+
+    // Traverse the tree using threads
+    while (temp != NULL) {
+        printf("%d ", temp->data);  // Print the node's data
+        
+        // If there's a thread to the right, follow it
+        if (temp->rthread)
+            temp = temp->right;  // Move to the right using the thread
+        else
+            break;  // No thread to the right, end traversal
+    }
+}
+
+// Driver code
+int main() {
+    struct Node* root = createNode(50);  // Create the root node
+    insert(&root, 30);  // Insert 30
+    insert(&root, 20);  // Insert 20
+    insert(&root, 40);  // Insert 40
+    insert(&root, 70);  // Insert 70
+    insert(&root, 60);  // Insert 60
+    insert(&root, 80);  // Insert 80
+
+    printf("In-order traversal: ");
+    inorder(root);  // Prints the nodes in in-order using threaded traversal
+    return 0;
+}

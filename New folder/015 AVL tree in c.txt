@@ -1,0 +1,120 @@
+//15.WAP of Implementation of AVL tree in c
+
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define structure for the AVL Tree node
+struct Node {
+    int data;        // Data stored in the node
+    struct Node *left, *right;  // Pointers to left and right child nodes
+    int height;      // Height of the node in the tree
+};
+
+// Function to get the height of a node
+int height(struct Node* node) {
+    if (!node) return 0;  // If the node is NULL, return height as 0
+    return node->height;  // Return the height of the node
+}
+
+// Function to update the height of a node based on its children
+int updateHeight(struct Node* node) {
+    return 1 + (height(node->left) > height(node->right) ? height(node->left) : height(node->right));
+    // The height is 1 plus the maximum height between the left and right child
+}
+
+// Right rotate the subtree rooted with y
+struct Node* rightRotate(struct Node* y) {
+    struct Node* x = y->left;  // Set x as the left child of y
+    y->left = x->right;        // Make x's right child the left child of y
+    x->right = y;              // Make y the right child of x
+    y->height = updateHeight(y);  // Update the height of y after the rotation
+    x->height = updateHeight(x);  // Update the height of x after the rotation
+    return x;  // Return the new root after the rotation
+}
+
+// Left rotate the subtree rooted with x
+struct Node* leftRotate(struct Node* x) {
+    struct Node* y = x->right;  // Set y as the right child of x
+    x->right = y->left;         // Make y's left child the right child of x
+    y->left = x;                // Make x the left child of y
+    x->height = updateHeight(x);  // Update the height of x after the rotation
+    y->height = updateHeight(y);  // Update the height of y after the rotation
+    return y;  // Return the new root after the rotation
+}
+
+// Balance the tree by checking the balance factor of the node
+struct Node* balance(struct Node* node) {
+    // If the left subtree is higher by more than one, perform rotations
+    if (height(node->left) - height(node->right) > 1) {
+        // Left-Left case: right rotate
+        if (height(node->left->left) >= height(node->left->right))
+            return rightRotate(node);
+        // Left-Right case: left rotate on the left child, then right rotate
+        else {
+            node->left = leftRotate(node->left);
+            return rightRotate(node);
+        }
+    }
+    // If the right subtree is higher by more than one, perform rotations
+    if (height(node->right) - height(node->left) > 1) {
+        // Right-Right case: left rotate
+        if (height(node->right->right) >= height(node->right->left))
+            return leftRotate(node);
+        // Right-Left case: right rotate on the right child, then left rotate
+        else {
+            node->right = rightRotate(node->right);
+            return leftRotate(node);
+        }
+    }
+    return node;  // Return the node if it is balanced
+}
+
+// Insert a node into the AVL Tree
+struct Node* insert(struct Node* node, int data) {
+    // If the node is NULL, create a new node
+    if (!node) {
+        struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+        newNode->data = data;
+        newNode->left = newNode->right = NULL;  // Initially, no left or right children
+        newNode->height = 1;  // Set height of new node to 1
+        return newNode;
+    }
+
+    // Recursive insertion: if data is smaller, insert in the left subtree
+    if (data < node->data)
+        node->left = insert(node->left, data);
+    else  // If data is larger, insert in the right subtree
+        node->right = insert(node->right, data);
+
+    // Update the height of the current node
+    node->height = updateHeight(node);
+
+    // Balance the tree and return the new root after balancing
+    return balance(node);
+}
+
+// Pre-order traversal of the AVL Tree (root, left, right)
+void preOrder(struct Node* root) {
+    if (root) {
+        printf("%d ", root->data);  // Print the root data
+        preOrder(root->left);  // Traverse the left subtree
+        preOrder(root->right);  // Traverse the right subtree
+    }
+}
+
+int main() {
+    struct Node* root = NULL;  // Start with an empty tree
+
+    // Inserting nodes into the AVL Tree
+    root = insert(root, 30);
+    root = insert(root, 20);
+    root = insert(root, 40);
+    root = insert(root, 10);
+    root = insert(root, 25);
+
+    // Print the pre-order traversal of the AVL Tree
+    printf("Pre-order Traversal: ");
+    preOrder(root);  // Expected output: 30 20 10 25 40
+
+    return 0;
+}

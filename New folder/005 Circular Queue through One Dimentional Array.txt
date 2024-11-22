@@ -1,0 +1,60 @@
+#include <stdio.h>
+#define MAX 5 // Define the maximum size of the queue
+
+int queue[MAX]; // Array to represent the circular queue
+int front = -1, rear = -1; // Initialize front and rear to -1 (indicating an empty queue)
+
+// Enqueue function: Adds an element to the circular queue
+void enqueue(int value) {
+    if ((rear + 1) % MAX == front) { // Check if the queue is full
+        printf("Queue is full\n");
+    } else {
+        if (front == -1) front = 0; // If the queue is empty, set front to 0
+        rear = (rear + 1) % MAX; // Increment rear in a circular manner
+        queue[rear] = value;    // Insert the new element at the rear position
+    }
+}
+
+// Dequeue function: Removes and returns the element from the front of the circular queue
+int dequeue() {
+    if (front == -1) { // Check if the queue is empty
+        printf("Queue is empty\n");
+        return -1; // Return -1 to indicate underflow
+    } else {
+        int value = queue[front]; // Store the front element to return later
+        if (front == rear) {      // If the queue becomes empty after dequeuing
+            front = rear = -1;    // Reset front and rear to -1
+        } else {
+            front = (front + 1) % MAX; // Increment front in a circular manner
+        }
+        return value; // Return the dequeued element
+    }
+}
+
+// Display function: Prints all elements in the circular queue
+void display() {
+    if (front == -1) { // Check if the queue is empty
+        printf("Queue is empty\n");
+    } else {
+        int i = front; // Start from the front
+        while (i != rear) { // Traverse until the rear is reached
+            printf("%d ", queue[i]);
+            i = (i + 1) % MAX; // Move to the next position in a circular manner
+        }
+        printf("%d\n", queue[rear]); // Print the last element (at rear)
+    }
+}
+
+int main() {
+    enqueue(10); // Add 10 to the circular queue
+    enqueue(20); // Add 20 to the circular queue
+    display();   // Output: 10 20
+
+    dequeue();   // Remove the front element (10)
+    display();   // Output: 20
+
+    enqueue(30); // Add 30 to the circular queue
+    display();   // Output: 20 30
+
+    return 0; // End of the program
+}

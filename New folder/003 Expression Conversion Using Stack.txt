@@ -1,0 +1,60 @@
+#include <stdio.h>
+#define MAX 100 // Define the maximum size of the stack
+
+char stack[MAX]; // Stack for operators and parentheses
+int top = -1;    // Initialize stack top to -1 (indicating empty stack)
+
+// Push operation: Adds a character to the stack
+void push(char c) {
+    stack[++top] = c; // Increment top and push the character onto the stack
+}
+
+// Pop operation: Removes and returns the top character from the stack
+char pop() {
+    return stack[top--]; // Return the top character and decrement top
+}
+
+// Function to check the precedence of operators
+int precedence(char c) {
+    if (c == '+' || c == '-') return 1; // Lowest precedence for addition and subtraction
+    if (c == '*' || c == '/') return 2; // Higher precedence for multiplication and division
+    return 0; // Return 0 for non-operator characters
+}
+
+// Function to convert infix expression to postfix
+void infixToPostfix(char infix[], char postfix[]) {
+    int i = 0, j = 0; // `i` for traversing infix, `j` for constructing postfix
+    while (infix[i] != '\0') { // Loop through each character of the infix expression
+        char c = infix[i];
+
+        if (c >= 'a' && c <= 'z') // If the character is an operand (lowercase letters)
+            postfix[j++] = c;     // Add it to the postfix expression
+        else if (c == '(')        // If the character is a left parenthesis
+            push(c);              // Push it onto the stack
+        else if (c == ')') {      // If the character is a right parenthesis
+            while (stack[top] != '(') // Pop and append until '(' is found
+                postfix[j++] = pop();
+            pop(); // Pop the '(' from the stack
+        } else {                   // If the character is an operator
+            while (top != -1 && precedence(stack[top]) >= precedence(c))
+                postfix[j++] = pop(); // Pop higher or equal precedence operators
+            push(c); // Push the current operator onto the stack
+        }
+        i++; // Move to the next character in infix expression
+    }
+
+    while (top != -1) // Pop any remaining operators from the stack
+        postfix[j++] = pop();
+    postfix[j] = '\0'; // Null-terminate the postfix expression
+}
+
+int main() {
+    char infix[MAX], postfix[MAX];
+    printf("Enter infix expression: "); // Prompt user for input
+    scanf("%s", infix); // Read the infix expression (as a string)
+
+    infixToPostfix(infix, postfix); // Convert infix to postfix
+    printf("Postfix expression: %s\n", postfix); // Display the postfix expression
+
+    return 0; // End of the program
+}

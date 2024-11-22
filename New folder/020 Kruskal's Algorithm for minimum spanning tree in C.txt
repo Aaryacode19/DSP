@@ -1,0 +1,113 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 10
+
+// Structure to represent a graph edge
+struct Edge {
+    int u, v, weight; // The two vertices (u, v) and the edge weight
+};
+
+// Structure to represent a subset for union-find
+struct Subset {
+    int parent; // Parent of the node
+    int rank;   // Rank of the node (used for efficient union)
+};
+
+// Global array to hold the edges of the graph
+struct Edge edges[MAX];
+
+// Function to find the parent of a node (with path compression)
+int find(struct Subset subsets[], int i) {
+    if (subsets[i].parent != i) {
+        // Path compression: make each node in the path point directly to the root
+        subsets[i].parent = find(subsets, subsets[i].parent);
+    }
+    return subsets[i].parent;
+}
+
+// Function to perform union of two subsets (by rank)
+void Union(struct Subset subsets[], int x, int y) {
+    int rootX = find(subsets, x); // Find root of x
+    int rootY = find(subsets, y); // Find root of y
+
+    if (rootX != rootY) {
+        // Union by rank: attach the smaller tree under the root of the larger tree
+        if (subsets[rootX].rank < subsets[rootY].rank) {
+            subsets[rootX].parent = rootY;
+        } else if (subsets[rootX].rank > subsets[rootY].rank) {
+            subsets[rootY].parent = rootX;
+        } else {
+            subsets[rootY].parent = rootX;
+            subsets[rootX].rank++; // Increase the rank if both trees have the same rank
+        }
+    }
+}
+
+// Function to compare two edges based on their weights (for sorting)
+int compare(const void *a, const void *b) {
+    return ((struct Edge *)a)->weight - ((struct Edge *)b)->weight;
+}
+
+// Function to implement Kruskal's Algorithm for MST
+void kruskalMST(struct Edge edges[], int V, int E) {
+    struct Subset subsets[MAX];
+    int mstWeight = 0;
+
+    // Initialize subsets: each node is its own parent and has rank 0
+    for (int i = 0; i < V; i++) {
+        subsets[i].parent = i;
+        subsets[i].rank = 0;
+    }
+
+    // Sort the edges in non-decreasing order of their weight
+    qsort(edges, E, sizeof(edges[0]), compare);
+
+    // Result array to store the MST
+    printf("Edges in the Minimum Spanning Tree:\n");
+    
+    // Number of edges in MST
+    int mstEdges = 0;
+
+    // Loop to process all the edges
+    for (int i = 0; mstEdges < V - 1; i++) {
+        struct Edge currentEdge = edges[i];
+        int u = currentEdge.u;
+        int v = currentEdge.v;
+
+        // Find the subsets of the vertices u and v
+        int rootU = find(subsets, u);
+        int rootV = find(subsets, v);
+
+        // If including this edge does not form a cycle (i.e., u and v belong to different sets)
+        if (rootU != rootV) {
+            printf("%d - %d: %d\n", u, v, currentEdge.weight);
+            mstWeight += currentEdge.weight; // Add the weight of the edge to MST weight
+            Union(subsets, rootU, rootV); // Union the sets of u and v
+            mstEdges++; // Increment the count of edges in the MST
+        }
+    }
+
+    printf("Total weight of MST: %d\n", mstWeight);
+}
+
+int main() {
+    int V, E;
+    
+    // Read the number of vertices and edges
+    printf("Enter the number of vertices: ");
+    scanf("%d", &V);
+    printf("Enter the number of edges: ");
+    scanf("%d", &E);
+
+    // Read the edges of the graph (u, v, weight)
+    for (int i = 0; i < E; i++) {
+        printf("Enter edge (u, v, weight): ");
+        scanf("%d %d %d", &edges[i].u, &edges[i].v, &edges[i].weight);
+    }
+
+    // Apply Kruskal's Algorithm to find the MST
+    kruskalMST(edges, V, E);
+
+    return 0;
+}

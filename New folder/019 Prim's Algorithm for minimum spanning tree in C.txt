@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <limits.h>
+
+#define MAX 10
+
+int graph[MAX][MAX], parent[MAX], key[MAX], visited[MAX];
+int n;
+
+// Function to find the vertex with the minimum key value that hasn't been visited
+int minKey() {
+    int min = INT_MAX, min_index;
+    for (int i = 0; i < n; i++) {
+        if (!visited[i] && key[i] < min) {
+            min = key[i];
+            min_index = i; // Store the index of the vertex with the minimum key
+        }
+    }
+    return min_index;
+}
+
+// Function to implement Prim's Algorithm to find the Minimum Spanning Tree
+void prims() {
+    // Initialize all key values to infinity and visited array to 0 (false)
+    for (int i = 0; i < n; i++) {
+        key[i] = INT_MAX;
+        visited[i] = 0;
+    }
+
+    key[0] = 0; // Start with the first vertex (arbitrary choice, 0-indexed)
+    parent[0] = -1; // No parent for the root vertex
+
+    // Loop to add vertices to the MST (n-1 vertices)
+    for (int count = 0; count < n - 1; count++) {
+        // Pick the vertex with the minimum key value from the set of unvisited vertices
+        int u = minKey();
+        visited[u] = 1; // Mark the vertex as visited
+
+        // Update the key values of the adjacent vertices of the picked vertex
+        for (int v = 0; v < n; v++) {
+            // If vertex v is not visited, there is an edge from u to v, and
+            // the weight of the edge from u to v is less than the current key value of v
+            if (graph[u][v] && !visited[v] && graph[u][v] < key[v]) {
+                key[v] = graph[u][v]; // Update the key value
+                parent[v] = u; // Set the parent of v as u
+            }
+        }
+    }
+}
+
+// Function to print the Minimum Spanning Tree (MST)
+void printMST() {
+    printf("Edge \tWeight\n");
+    for (int i = 1; i < n; i++) {
+        printf("%d - %d: %d\n", parent[i], i, graph[i][parent[i]]);
+    }
+}
+
+int main() {
+    // Input the number of vertices
+    printf("Enter number of vertices: ");
+    scanf("%d", &n);
+
+    // Input the adjacency matrix (graph)
+    printf("Enter the adjacency matrix:\n");
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            scanf("%d", &graph[i][j]); // Each entry represents the edge weight
+        }
+    }
+
+    // Run Prim's Algorithm to find the MST
+    prims();
+
+    // Print the resulting MST
+    printMST();
+
+    return 0;
+}

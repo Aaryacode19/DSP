@@ -1,0 +1,70 @@
+#include <stdio.h>
+
+#define MAX 10
+
+int graph[MAX][MAX], visited[MAX], queue[MAX]; // Graph, visited array, and queue for BFS
+int front = 0, rear = 0; // Front and rear indices for the queue
+
+// Enqueue function to add a vertex to the queue
+void enqueue(int v) {
+    queue[rear++] = v; // Add vertex 'v' to the queue and increment rear
+}
+
+// Dequeue function to remove a vertex from the queue
+int dequeue() {
+    return queue[front++]; // Return the vertex at the front and increment front
+}
+
+// BFS function to perform Breadth-First Search
+void bfs(int start, int n) {
+    enqueue(start); // Start BFS from the given vertex
+    visited[start] = 1; // Mark the start vertex as visited
+    
+    // Continue until the queue is empty
+    while (front < rear) {
+        int v = dequeue(); // Remove a vertex from the queue
+        printf("%d ", v); // Print the visited vertex
+        
+        // Visit all unvisited adjacent vertices of v
+        for (int i = 0; i < n; i++) {
+            if (graph[v][i] == 1 && !visited[i]) { // If there's an edge and the vertex is not visited
+                enqueue(i); // Enqueue the vertex
+                visited[i] = 1; // Mark the vertex as visited
+            }
+        }
+    }
+}
+
+int main() {
+    int n, edges, u, v;
+
+    // Input the number of vertices
+    printf("Enter number of vertices: ");
+    scanf("%d", &n);
+    
+    // Initialize graph and visited array
+    for (int i = 0; i < n; i++) {
+        visited[i] = 0; // Mark all vertices as unvisited
+        for (int j = 0; j < n; j++) {
+            graph[i][j] = 0; // Initialize graph with no edges
+        }
+    }
+
+    // Input the number of edges
+    printf("Enter number of edges: ");
+    scanf("%d", &edges);
+    printf("Enter edges (u v):\n");
+    
+    // Input each edge and mark it in the adjacency matrix
+    for (int i = 0; i < edges; i++) {
+        scanf("%d %d", &u, &v);
+        graph[u][v] = 1;  // Add edge u -> v
+        graph[v][u] = 1;  // Add edge v -> u (since the graph is undirected)
+    }
+
+    // Perform BFS starting from vertex 0
+    printf("BFS starting from vertex 0:\n");
+    bfs(0, n); // Start BFS from vertex 0
+
+    return 0;
+}

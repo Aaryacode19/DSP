@@ -1,0 +1,51 @@
+#include <stdio.h>
+#define MAX 5 // Define the maximum size of the queue
+
+int queue[MAX]; // Array to hold the elements of the queue
+int front = -1, rear = -1; // Initialize front and rear to -1 (indicating an empty queue)
+
+// Enqueue function: Adds an element to the end of the queue
+void enqueue(int value) {
+    if (rear == MAX - 1) { // Check if the queue is full
+        printf("Queue is full\n");
+    } else {
+        if (front == -1) front = 0; // If the queue is empty, set front to 0
+        queue[++rear] = value; // Increment rear and add the value to the queue
+    }
+}
+
+// Dequeue function: Removes and returns the element from the front of the queue
+int dequeue() {
+    if (front == -1 || front > rear) { // Check if the queue is empty
+        printf("Queue is empty\n");
+        return -1; // Return -1 to indicate underflow
+    } else {
+        return queue[front++]; // Return the front element and increment front
+    }
+}
+
+// Display function: Prints all elements in the queue
+void display() {
+    if (front == -1 || front > rear) { // Check if the queue is empty
+        printf("Queue is empty\n");
+    } else {
+        for (int i = front; i <= rear; i++) { // Iterate from front to rear
+            printf("%d ", queue[i]); // Print each element
+        }
+        printf("\n"); // Move to the next line
+    }
+}
+
+int main() {
+    enqueue(10); // Add 10 to the queue
+    enqueue(20); // Add 20 to the queue
+    display(); // Display the queue: Output: 10 20
+
+    dequeue(); // Remove the front element (10)
+    display(); // Display the queue: Output: 20
+
+    enqueue(30); // Add 30 to the queue
+    display(); // Display the queue: Output: 20 30
+
+    return 0; // End of the program
+}

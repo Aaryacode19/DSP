@@ -1,0 +1,53 @@
+//9.WAP of Implementation of Circular linked list in c.
+
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define a node structure
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+// Function to insert a node at the end
+void insertEnd(struct Node** head, int value) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = value;
+    if (*head == NULL) {
+        *head = newNode;
+        newNode->next = *head;  // Circular link
+    } else {
+        struct Node* temp = *head;
+        while (temp->next != *head) {
+            temp = temp->next;
+        }
+        temp->next = newNode;
+        newNode->next = *head;  // Make the list circular
+    }
+}
+
+// Function to display the list
+void display(struct Node* head) {
+    if (head == NULL) {
+        printf("List is empty\n");
+        return;
+    }
+
+    struct Node* temp = head;
+    do {
+        printf("%d -> ", temp->data);
+        temp = temp->next;
+    } while (temp != head);
+    printf("(head)\n");
+}
+
+int main() {
+    struct Node* head = NULL;  // Start with an empty list
+
+    insertEnd(&head, 10);
+    insertEnd(&head, 20);
+    insertEnd(&head, 30);
+    display(head);  // Output: 10 -> 20 -> 30 -> (head)
+
+    return 0;
+}

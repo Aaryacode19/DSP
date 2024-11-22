@@ -1,0 +1,60 @@
+//6.WAP of Implementation of Priority Queue through One Dimentional Array
+
+#include <stdio.h>
+#define MAX 5
+
+int queue[MAX];
+int rear = -1;
+
+// Enqueue function (Insert with priority)
+void enqueue(int value) {
+    if (rear == MAX - 1) {
+        printf("Queue is full\n");
+        return;
+    }
+
+    // Insert element at the rear
+    rear++;
+    queue[rear] = value;
+
+    // Rearrange elements to maintain priority order (highest number first)
+    for (int i = rear; i > 0 && queue[i] > queue[i - 1]; i--) {
+        int temp = queue[i];
+        queue[i] = queue[i - 1];
+        queue[i - 1] = temp;
+    }
+}
+
+// Dequeue function (Remove the highest priority element)
+int dequeue() {
+    if (rear == -1) {
+        printf("Queue is empty\n");
+        return -1;
+    }
+    return queue[rear--];
+}
+
+// Display function to show the queue
+void display() {
+    if (rear == -1) {
+        printf("Queue is empty\n");
+    } else {
+        for (int i = 0; i <= rear; i++) {
+            printf("%d ", queue[i]);
+        }
+        printf("\n");
+    }
+}
+
+int main() {
+    enqueue(10);
+    enqueue(30);
+    enqueue(20);
+    display();  // Output: 30 20 10
+
+    printf("Dequeued: %d\n", dequeue());  // Output: 30
+    display();  // Output: 20 10
+
+
+    return 0;
+}

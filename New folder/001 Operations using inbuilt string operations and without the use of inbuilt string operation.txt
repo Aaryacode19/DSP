@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <string.h>
+
+// Function to calculate string length without inbuilt functions
+int stringLength(char str[]) {
+    int i = 0;
+    while (str[i] != '\0') {
+        i++;
+    }
+    return i;
+}
+
+// Function to concatenate two strings without inbuilt functions
+void stringConcat(char str1[], char str2[], char result[]) {
+    int i = 0, j = 0;
+    while (str1[i] != '\0') {
+        result[i] = str1[i];
+        i++;
+    }
+    while (str2[j] != '\0') {
+        result[i] = str2[j];
+        i++;
+        j++;
+    }
+    result[i] = '\0';
+}
+
+// Function to compare two strings without inbuilt functions
+int stringCompare(char str1[], char str2[]) {
+    int i = 0;
+    while (str1[i] != '\0' && str2[i] != '\0') {
+        if (str1[i] != str2[i]) {
+            return str1[i] - str2[i];
+        }
+        i++;
+    }
+    return str1[i] - str2[i];
+}
+
+int main() {
+    char str1[100], str2[100], result[200];
+
+    printf("Enter the first string: ");
+    scanf("%s", str1);
+    printf("Enter the second string: ");
+    scanf("%s", str2);
+
+    // Length of strings
+    printf("\nString Length:\n");
+    printf("First string length (inbuilt): %ld\n", strlen(str1));
+    printf("Second string length (inbuilt): %ld\n", strlen(str2));
+    printf("First string length (manual): %d\n", stringLength(str1));
+    printf("Second string length (manual): %d\n", stringLength(str2));
+
+    // Concatenation of strings
+    printf("\nString Concatenation:\n");
+    strcpy(result, str1); // Copy str1 to result
+    strcat(result, str2); // Concatenate str2 to result
+    printf("Concatenated string (inbuilt): %s\n", result);
+
+    stringConcat(str1, str2, result);
+    printf("Concatenated string (manual): %s\n", result);
+
+    // Comparison of strings
+    printf("\nString Comparison:\n");
+    if (strcmp(str1, str2) == 0) {
+        printf("Strings are equal (inbuilt).\n");
+    } else {
+        printf("Strings are not equal (inbuilt).\n");
+    }
+
+    if (stringCompare(str1, str2) == 0) {
+        printf("Strings are equal (manual).\n");
+    } else {
+        printf("Strings are not equal (manual).\n");
+    }
+
+    return 0;
+}
